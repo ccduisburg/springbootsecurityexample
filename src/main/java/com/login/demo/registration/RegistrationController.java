@@ -17,4 +17,9 @@ public class RegistrationController {
     public String confirm(@RequestParam("token")String token){
         return registrationService.confirmToken(token);
     }
+
+    @GetMapping(path="paswordforgot")
+    public String passwordforgot(@RequestParam("email")String email){
+        return registrationService.passwordforgot(email);
+    }
 }

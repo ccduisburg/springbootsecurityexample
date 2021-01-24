@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RegistrationService {
     private final String CONFIGRATION_URL="http://localhost:8080/api/v1/registration/confirm?token=";
+    private final String PASSWORD_RESET_URL="http://localhost:8080/api/v1/registration/passwordreset?token=";
     private final AppUserService appUserService;
     private final EmailValidator emailValidator;
     private final ConfirmationTokenService confirmationTokenService;
@@ -137,6 +138,23 @@ public class RegistrationService {
                 "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
                 "\n" +
                 "</div></div>";
+    }
+//password Vergessen und Reset activitate
+    public String passwordforgot(String email) {
+        boolean isValidEmail = emailValidator.
+                test(email);
+
+        if (!isValidEmail) {
+            throw new IllegalStateException("email not valid");
+        }
+        AppUser appuser= (AppUser) appUserService.loadUserByUsername(email);
+        Loginrequest loginuser=new Loginrequest(appuser.getEmail(),appuser.getPassword());
+        String token = appUserService.loginUser(loginuser);
+        String link = PASSWORD_RESET_URL+token;
+        emailSender.send(
+                email,"<a href="+"http://localhost:8080/change-password/"+token+">reset password</a>");
+
+        return token;
     }
 
 }

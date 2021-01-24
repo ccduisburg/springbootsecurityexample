@@ -1,5 +1,6 @@
 package com.login.demo.appuser;
 
+import com.login.demo.registration.Loginrequest;
 import com.login.demo.registration.token.ConfirmationToken;
 import com.login.demo.registration.token.ConfirmationTokenRepository;
 import com.login.demo.registration.token.ConfirmationTokenService;
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -51,5 +53,20 @@ public class AppUserService implements UserDetailsService {
     }
     public int enableAppUser(String email) {
         return userRepository.enableAppUser(email);
+    }
+
+    public String loginUser(Loginrequest loginrequest) {
+        String token= UUID.randomUUID().toString();
+        Optional<AppUser> userExists=userRepository.findByEmail(loginrequest.getEmail());
+
+        if(!userExists.isPresent()){
+
+            throw new IllegalStateException(" email or username not exist");
+        }
+        String encodedPassword= bCryptPasswordEncoder.encode(loginrequest.getPassword());
+       if(userExists.get().getPassword().equals(encodedPassword)){
+
+       }
+       return token;
     }
 }
